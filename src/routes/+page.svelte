@@ -47,6 +47,7 @@
 
         gegenereerd = true;
         
+        ctx.clearRect(0, 0, 400, 400);
         ctx.drawImage(pf, x, y, width, height, 0, 0, 400, 400);
         ctx.drawImage(frameElement, 0, 0, 400, 400);
 
