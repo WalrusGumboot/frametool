@@ -8,7 +8,7 @@
     let gegenereerd = false;
 
     async function run(): Promise<void> {
-        let buf = new Blob([await files[0].arrayBuffer()]);
+        let buf = new Blob([await files[files.length - 1].arrayBuffer()]);
         let pf = await createImageBitmap(buf);
         let ctx = cnv.getContext("2d")!;
 
