@@ -22,7 +22,7 @@
 <div class="p-6 bg-red-100 flex flex-col gap-4 items-center w-screen h-screen overflow-hidden">
     <img src={frame} class="hidden" alt="frame" bind:this={frameElement}>
     <h1 class="text-3xl font-bold">Pixels epische frame tool!</h1>
-    <input class="border border-black bg-white px-4 py-2" type="file" accept="jpg,JPG,png,PNG,webp,WEBP,bmp,BMP,tiff,TIFF,aiff" bind:files on:change={run}>
+    <input class="border border-black bg-white px-4 py-2" type="file" accept=".jpg,.JPG,.png,.PNG,.webp,.WEBP,.bmp,.BMP,.tiff,.TIFF" bind:files on:change={run}>
     <canvas width=400 height=400 id="cnv" bind:this={cnv}></canvas>
     {#if gegenereerd}
         <a href={cnv.toDataURL("image/png")} download="pixel-profielfoto.png" class="border border-black bg-white px-4 py-2">
