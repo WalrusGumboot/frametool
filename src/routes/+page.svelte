@@ -47,9 +47,9 @@
 
         gegenereerd = true;
         
-        ctx.clearRect(0, 0, 400, 400);
-        ctx.drawImage(pf, x, y, width, height, 0, 0, 400, 400);
-        ctx.drawImage(frameElement, 0, 0, 400, 400);
+        ctx.clearRect(0, 0, 1500, 1500);
+        ctx.drawImage(pf, x, y, width, height, 0, 0, 1500, 1500);
+        ctx.drawImage(frameElement, 0, 0, 1500, 1500);
 
         teDownloaden = cnv.toDataURL();
     }
@@ -82,7 +82,7 @@
             </div>
         {/if}
     
-        <canvas width="400" height="400" id="cnv" bind:this={cnv} class="size-1/3 aspect-square"></canvas>
+        <canvas width="1500" height="1500" id="cnv" bind:this={cnv} class="size-1/3 aspect-square"></canvas>
         {#if gegenereerd}
             <a
                 href={teDownloaden}
