@@ -59,7 +59,7 @@
     class="p-6 bg-red-100 flex flex-col gap-4 items-center align-center size-full min-h-screen"
 >
     <img src={frame} class="hidden" alt="frame" bind:this={frameElement} />
-    <h1 class="text-3xl font-bold">Pixels epische frame tool!</h1>
+    <h1 class="text-3xl font-bold">Wina's epische 24 urenloop frame tool!</h1>
     <input
         class="border border-black bg-white px-4 py-2"
         type="file"
@@ -86,7 +86,7 @@
         {#if gegenereerd}
             <a
                 href={teDownloaden}
-                download="pixel-profielfoto.png"
+                download="wina-24urenloop-profielfoto.png"
                 class="border border-black bg-white px-4 py-2 grow text-center"
             >
                 Download je profielfoto hier!
