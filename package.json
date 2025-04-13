@@ -25,6 +25,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "@sveltejs/adapter-node": "^5.2.12",
+    "prisma": "^6.6.0",
     "svelte-easy-crop": "^2.0.3"
   }
 }

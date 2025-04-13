@@ -1,131 +1,121 @@
 <script lang="ts">
-    import frame from "../frame.png";
-    import Cropper from "svelte-easy-crop";
+    import { fade } from "svelte/transition";
 
-    let files: FileList | undefined;
-    let cnv: HTMLCanvasElement;
-    let frameElement: HTMLImageElement;
+    let uploadModal = false;
 
-    let afbeelding = "";
-    let gegenereerd = false;
+    let slugField = "";
+    let titleField = "";
+    let frameCandidates: FileList;
 
-    let teDownloaden = "";
+    async function uploadNewFrame() {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const resp = await fetch("uploadNewFrame", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: titleField,
+                    slug: slugField,
+                    frame: reader.result,
+                }),
+            });
 
-    let crop = { x: 0, y: 0 };
+            const respBody = await resp.json();
 
-    let uploadButton: HTMLInputElement | undefined;
-
-    async function readFile(file: File) {
-        return new Promise((resolve, reject) => {
-            var fr = new FileReader();
-
-            fr.onload = () => {
-                resolve(fr.result);
-            };
-            fr.onerror = reject;
-            fr.readAsDataURL(file);
-        });
-    }
-
-    async function onFileSelected(e: any) {
-        let imageFile = files![0];
-        afbeelding = (await readFile(imageFile)) as string;
-    }
-
-    async function gecropt(pos: {
-        detail: {
-            pixels: { x: number; y: number; width: number; height: number };
+            if (resp.status != 201) {
+                alert(respBody.error);
+            } else {
+                alert(
+                    `OK! Je frame is nu te bezichtigen op ${window.location.hostname}/${slugField}`,
+                );
+            }
         };
-    }): Promise<void> {
-        let pf = new Image();
-        pf.src = afbeelding;
-
-        let ctx = cnv.getContext("2d")!;
-
-        let x = pos.detail.pixels.x;
-        let y = pos.detail.pixels.y;
-        let width = pos.detail.pixels.width;
-        let height = pos.detail.pixels.height;
-
-        gegenereerd = true;
-
-        ctx.clearRect(0, 0, 1500, 1500);
-        ctx.drawImage(pf, x, y, width, height, 0, 0, 1500, 1500);
-        ctx.drawImage(frameElement, 0, 0, 1500, 1500);
-
-        teDownloaden = cnv.toDataURL();
+        reader.readAsDataURL(frameCandidates[0]);
     }
 </script>
 
-<div
-    class="p-8 bg-indigo-100 flex flex-col gap-4 items-center align-center size-full h-screen w-screen overflow-x-hidden"
->
-    <img src={frame} class="hidden" alt="frame" bind:this={frameElement} />
-    <h1 class="text-3xl font-bold text-center">
-        Axioms frame tool :)
-    </h1>
-    <div class="flex flex-row gap-4">
-        <button
-            class="bg-indigo-500 px-4 py-2 text-white rounded-md"
-            on:click={() => {
-                uploadButton?.click();
-            }}
-        >
-            {#if files && files.length > 0}
-                Kies een andere foto...
-            {:else}
-                Kies een bestand...
-            {/if}
-        </button>
-        <input
-            class="hidden"
-            type="file"
-            accept="image/*"
-            bind:files
-            bind:this={uploadButton}
-            on:change={(e) => onFileSelected(e)}
-        />
-
-        {#if gegenereerd}
-            <a
-                href={teDownloaden}
-                download="axiom-profielfoto.png"
-                class="rounded-md bg-white px-4 py-2 shrink text-center"
-            >
-                Download!
-            </a>
-        {/if}
-    </div>
-
+{#if uploadModal}
     <div
-        class="flex flex-col lg:flex-row gap-4 w-full max-h-full items-center justify-stretch grow"
+        transition:fade={{ duration: 100 }}
+        class="bg-neutral-900/60 absolute inset-0 flex flex-col items-center justify-center"
+        on:click={() => {
+            uploadModal = false;
+        }}
+        role="none"
     >
-        {#if afbeelding != ""}
-            <div class="relative w-full lg:w-1/2 aspect-square">
-                <Cropper
-                    image={afbeelding}
-                    aspect={1}
-                    minZoom={1}
-                    bind:crop
-                    cropShape="round"
-                    on:cropcomplete={gecropt}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <div
+            class="bg-white p-8 rounded-md shadow-md min-w-1/2 z-20"
+            on:click={(e) => {
+                e.stopImmediatePropagation();
+            }}
+            role="dialog"
+            tabindex="-1"
+        >
+            <h2 class="text-2xl font-bold mb-4">Nieuw frame</h2>
+            <div class="flex flex-col gap-3">
+                <label for="title" class="text-sm text-gray-800 -mb-2"
+                    >Naam van de campagne</label
+                >
+                <input
+                    name="title"
+                    required
+                    class="bg-indigo-50 rounded-sm px-4 py-2"
+                    placeholder="Axiom profielfoto"
+                    on:input={(e) => {
+                        const original = e.currentTarget.value;
+                        slugField = original
+                            .replaceAll(/[^a-zA-Z0-9]+/g, "-")
+                            .toLowerCase();
+                    }}
+                />
+
+                <label for="slug" class="text-sm text-gray-800 -mb-2"
+                    >Slug</label
+                >
+                <input
+                    name="slug"
+                    bind:value={slugField}
+                    required
+                    class="bg-indigo-50 rounded-sm px-4 py-2"
+                    placeholder="Axiom profielfoto"
+                />
+
+                <label for="image" class="text-sm text-gray-800 -mb-2"
+                    >Afbeelding</label
+                >
+
+                <input
+                    name="image"
+                    type="file"
+                    accept="image/png"
+                    bind:files={frameCandidates}
+                />
+
+                <input
+                    type="submit"
+                    value="Upload frame"
+                    class="rounded-md bg-indigo-500 text-white px-4 py-2 mt-6"
+                    on:click={uploadNewFrame}
                 />
             </div>
-
-            <div class="flex flex-col gap-2 items-center">
-                <h3>een preview:</h3>
-                <div
-                    class="object-contain basis-1/3 lg:basis-inherit lg:size-1/2 shrink"
-                >
-                    <canvas
-                        width="1500"
-                        height="1500"
-                        id="cnv"
-                        bind:this={cnv}
-                        class="max-w-full max-h-full"
-                    ></canvas>
-                </div>
-            </div>
-        {/if}
+        </div>
     </div>
+{/if}
+
+<div
+    class="w-screen h-screen overflow-hidden flex flex-col gap-4 bg-indigo-300 p-8 items-center justify-center"
+>
+    <h1 class="text-8xl font-black text-indigo-800">Frametool</h1>
+    <p class="text-xl">Maak makkelijk frame generators voor profielfoto's.</p>
+    <button
+        on:click={() => {
+            uploadModal = true;
+        }}
+        class="bg-indigo-500 rounded-full text-xl font-bold text-white px-4 py-2 transition-all hover:scale-105 hover:-rotate-3 hover:shadow-lg hover:bg-indigo-600 active:bg-indigo-800"
+        >↑ Upload frame</button
+    >
 </div>

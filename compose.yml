@@ -1,0 +1,37 @@
+services:
+  server:
+    build: 
+      context: .
+      dockerfile: Server.Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      geert_wilders:
+        condition: service_completed_successfully
+
+  geert_wilders:
+    build:
+      context: .
+      dockerfile: GeertWilders.Dockerfile
+  db:
+    image: postgres:alpine
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5432"
+    volumes:
+      - frametool-db:/var/lib/postgresql/data:rw
+    env_file: 
+     - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-q", "-U", "postgres", "-d", "frametool" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  frametool-db:
