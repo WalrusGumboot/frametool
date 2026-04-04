@@ -58,15 +58,15 @@
 </script>
 
 <div
-    class="p-8 bg-indigo-100 flex flex-col gap-4 items-center align-center size-full h-screen w-screen overflow-x-hidden"
+    class="p-8 bg-emerald-100 flex flex-col gap-4 items-center align-center size-full h-screen w-screen overflow-x-hidden"
 >
     <img src={frame} class="hidden" alt="frame" bind:this={frameElement} />
     <h1 class="text-3xl font-bold text-center">
-        Axioms frame tool :)
+        Tensors frame tool :)
     </h1>
     <div class="flex flex-row gap-4">
         <button
-            class="bg-indigo-500 px-4 py-2 text-white rounded-md"
+            class="bg-emerald-500 px-4 py-2 text-white rounded-md"
             on:click={() => {
                 uploadButton?.click();
             }}
