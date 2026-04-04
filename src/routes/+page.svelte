@@ -89,7 +89,7 @@
         {#if gegenereerd}
             <a
                 href={teDownloaden}
-                download="axiom-profielfoto.png"
+                download="tensor-profielfoto.png"
                 class="rounded-md bg-white px-4 py-2 shrink text-center"
             >
                 Download!
